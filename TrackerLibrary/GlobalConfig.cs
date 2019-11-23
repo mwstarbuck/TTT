@@ -30,6 +30,7 @@ namespace TrackerLibrary
 
         public static string CnnString(string name)
         {
+            //ConfigurationManager comes from System.Configuration reference -- found in assemblies
             return ConfigurationManager.ConnectionStrings[name].ConnectionString;
         } 
     }
