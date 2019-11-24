@@ -72,6 +72,7 @@ namespace TrackerLibrary.DataAccess
         {
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(GlobalConfig.CnnString(db)))
             {
+                //Getting Team Name and Id here
                 var p = new DynamicParameters();
                 p.Add("@TeamName", model.TeamName);
                 p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output); //getting Id back as output
@@ -81,6 +82,7 @@ namespace TrackerLibrary.DataAccess
 
                 model.Id = p.Get<int>("@id");
 
+                //looping through each PersonModel in Team members here to create UI list of team members
                 foreach (PersonModel tm  in model.TeamMembers)
                 {
                     p = new DynamicParameters();
@@ -117,7 +119,11 @@ namespace TrackerLibrary.DataAccess
                 foreach (TeamModel team in output)
                 {
                     //for each team in Team
-                    team.TeamMembers = connection.Query<PersonModel>("dbo.spTeamMembers_GetByTeam").ToList();
+
+                    
+                    var p = new DynamicParameters();
+                    p.Add("@TeamId", team.Id);
+                    team.TeamMembers = connection.Query<PersonModel>("dbo.spTeamMembers_GetByTeam", p, commandType: CommandType.StoredProcedure).ToList();
                 }
             }
 
